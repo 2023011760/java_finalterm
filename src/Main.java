@@ -45,13 +45,12 @@ public class Main {
 
 class SecondFrame {
     private JFrame frame;
+    private JTextField assignmentField;
     private JTextField questionField;
-    private JTextArea questionsArea;
-    private String subjectName;
+    private JPanel assignmentPanel;
+    private JPanel questionPanel;
 
     public SecondFrame(String subjectName) {
-        this.subjectName = subjectName;
-
         frame = new JFrame("텍스트박스 1");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 400);
@@ -66,51 +65,63 @@ class SecondFrame {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayout(1, 2));
 
-        JPanel assignmentPanel = new JPanel();
+        assignmentPanel = new JPanel();
         assignmentPanel.setLayout(new BoxLayout(assignmentPanel, BoxLayout.Y_AXIS));
-        JLabel assignmentLabel = new JLabel("과제관");
+        JLabel assignmentLabel = new JLabel("과제");
         assignmentPanel.add(assignmentLabel);
         assignmentPanel.add(Box.createVerticalStrut(10));
 
-        questionsArea = new JTextArea();
-        questionsArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(questionsArea);
-        assignmentPanel.add(scrollPane);
-        mainPanel.add(assignmentPanel);
-
-        JPanel questionPanel = new JPanel();
-        questionPanel.setLayout(new BoxLayout(questionPanel, BoxLayout.Y_AXIS));
-        JLabel questionLabel = new JLabel("질문관");
-        questionPanel.add(questionLabel);
-        questionPanel.add(Box.createVerticalStrut(10));
-
-        JTextArea questionTextArea = new JTextArea(10, 20);
-        questionTextArea.setEditable(false);
-        JScrollPane questionScrollPane = new JScrollPane(questionTextArea);
-        questionPanel.add(questionScrollPane);
-        mainPanel.add(questionPanel);
-
-        frame.add(mainPanel, BorderLayout.CENTER);
-
-        questionField = new JTextField();
-        questionField.addActionListener(new ActionListener() {
+        assignmentField = new JTextField();
+        JButton assignmentButton = new JButton("완료");
+        assignmentButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String question = questionField.getText();
-                if (!question.isEmpty()) {
-                    questionsArea.append(question + "\n");
-                    questionTextArea.append(question + "\n");
-                    questionField.setText("");
+                String assignmentText = assignmentField.getText();
+                if (!assignmentText.isEmpty()) {
+                    JTextArea textArea = new JTextArea(1, 20);
+                    textArea.setText(assignmentText);
+                    textArea.setEditable(false);
+                    assignmentPanel.add(textArea);
+                    assignmentPanel.add(Box.createVerticalStrut(5));
+                    assignmentField.setText("");
+                    assignmentPanel.revalidate();  // 레이아웃 갱신
+                    assignmentPanel.repaint();
                 }
             }
         });
-        frame.add(questionField, BorderLayout.SOUTH);
+        assignmentPanel.add(assignmentField);
+        assignmentPanel.add(assignmentButton);
+        mainPanel.add(assignmentPanel);
 
-        JPanel bottomPanel = new JPanel();
-        JButton completeButton = new JButton("완료");
-        bottomPanel.add(completeButton);
-        frame.add(bottomPanel, BorderLayout.SOUTH);
+        questionPanel = new JPanel();
+        questionPanel.setLayout(new BoxLayout(questionPanel, BoxLayout.Y_AXIS));
+        JLabel questionLabel = new JLabel("질문");
+        questionPanel.add(questionLabel);
+        questionPanel.add(Box.createVerticalStrut(10));
 
+        questionField = new JTextField();
+        JButton questionButton = new JButton("완료");
+        questionButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String questionText = questionField.getText();
+                if (!questionText.isEmpty()) {
+                    JTextArea textArea = new JTextArea(1, 20);
+                    textArea.setText(questionText);
+                    textArea.setEditable(false);
+                    questionPanel.add(textArea);
+                    questionPanel.add(Box.createVerticalStrut(5));
+                    questionField.setText("");
+                    questionPanel.revalidate();  // 레이아웃 갱신
+                    questionPanel.repaint();
+                }
+            }
+        });
+        questionPanel.add(questionField);
+        questionPanel.add(questionButton);
+        mainPanel.add(questionPanel);
+
+        frame.add(mainPanel, BorderLayout.CENTER);
         frame.setVisible(true);
     }
 }
