@@ -5,123 +5,76 @@ import java.awt.event.ActionListener;
 
 public class Main {
     private JFrame frame;
-    private JTextField textField;
-
-    public Main() {
-        frame = new JFrame("과목 입력");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(350, 300);
-        frame.getContentPane().setBackground(Color.GRAY);
-        frame.setLayout(new FlowLayout());
-
-        JLabel label = new JLabel("과목의 이름을 적어주십시오.");
-        label.setFont(new Font("돋움", Font.PLAIN, 20));
-        label.setForeground(Color.BLACK);
-        frame.add(label);
-
-        textField = new JTextField(30);
-        textField.setPreferredSize(new Dimension(300, 40));
-        frame.add(textField);
-
-        JButton nextButton = new JButton("다음");
-        nextButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String subjectName = textField.getText();
-                new SecondFrame(subjectName);
-                frame.dispose();
-            }
-        });
-
-        frame.add(Box.createVerticalStrut(20));
-        frame.add(nextButton);
-        frame.setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        new Main();
-    }
-}
-
-class SecondFrame {
-    private JFrame frame;
     private JTextField assignmentField;
     private JTextField questionField;
     private JPanel assignmentPanel;
     private JPanel questionPanel;
 
-    public SecondFrame(String subjectName) {
-        frame = new JFrame("텍스트박스 1");
+    public Main() {
+        frame = new JFrame("입력 프로그램");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 400);
+        frame.setSize(400, 300);
         frame.getContentPane().setBackground(Color.GRAY);
-        frame.setLayout(new BorderLayout());
+        frame.setLayout(new GridLayout(1, 2));
 
-        JLabel subjectLabel = new JLabel("과목: " + subjectName);
-        subjectLabel.setFont(new Font("돋움", Font.PLAIN, 20));
-        subjectLabel.setForeground(Color.BLACK);
-        frame.add(subjectLabel, BorderLayout.NORTH);
+        assignmentPanel = createTextBoxPanel("과제");
+        questionPanel = createTextBoxPanel("질문");
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayout(1, 2));
+        frame.add(assignmentPanel);
+        frame.add(questionPanel);
 
-        assignmentPanel = new JPanel();
-        assignmentPanel.setLayout(new BoxLayout(assignmentPanel, BoxLayout.Y_AXIS));
-        JLabel assignmentLabel = new JLabel("과제");
-        assignmentPanel.add(assignmentLabel);
-        assignmentPanel.add(Box.createVerticalStrut(10));
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new FlowLayout());
 
-        assignmentField = new JTextField();
-        JButton assignmentButton = new JButton("완료");
-        assignmentButton.addActionListener(new ActionListener() {
+        assignmentField = new JTextField(10);
+        inputPanel.add(assignmentField);
+
+        questionField = new JTextField(10);
+        inputPanel.add(questionField);
+
+        JButton submitButton = new JButton("완료");
+        submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String assignmentText = assignmentField.getText();
-                if (!assignmentText.isEmpty()) {
-                    JTextArea textArea = new JTextArea(1, 20);
-                    textArea.setText(assignmentText);
-                    textArea.setEditable(false);
-                    assignmentPanel.add(textArea);
-                    assignmentPanel.add(Box.createVerticalStrut(5));
-                    assignmentField.setText("");
-                    assignmentPanel.revalidate();  // 레이아웃 갱신
-                    assignmentPanel.repaint();
-                }
-            }
-        });
-        assignmentPanel.add(assignmentField);
-        assignmentPanel.add(assignmentButton);
-        mainPanel.add(assignmentPanel);
-
-        questionPanel = new JPanel();
-        questionPanel.setLayout(new BoxLayout(questionPanel, BoxLayout.Y_AXIS));
-        JLabel questionLabel = new JLabel("질문");
-        questionPanel.add(questionLabel);
-        questionPanel.add(Box.createVerticalStrut(10));
-
-        questionField = new JTextField();
-        JButton questionButton = new JButton("완료");
-        questionButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
                 String questionText = questionField.getText();
+                if (!assignmentText.isEmpty()) {
+                    addTextToPanel(assignmentPanel, assignmentText);
+                    assignmentField.setText("");
+                }
                 if (!questionText.isEmpty()) {
-                    JTextArea textArea = new JTextArea(1, 20);
-                    textArea.setText(questionText);
-                    textArea.setEditable(false);
-                    questionPanel.add(textArea);
-                    questionPanel.add(Box.createVerticalStrut(5));
+                    addTextToPanel(questionPanel, questionText);
                     questionField.setText("");
-                    questionPanel.revalidate();  // 레이아웃 갱신
-                    questionPanel.repaint();
                 }
             }
         });
-        questionPanel.add(questionField);
-        questionPanel.add(questionButton);
-        mainPanel.add(questionPanel);
+        inputPanel.add(submitButton);
 
-        frame.add(mainPanel, BorderLayout.CENTER);
+        frame.add(inputPanel, BorderLayout.SOUTH);
         frame.setVisible(true);
+    }
+
+    private JPanel createTextBoxPanel(String title) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(BorderFactory.createTitledBorder(title));
+        panel.setBackground(Color.LIGHT_GRAY);
+        panel.setPreferredSize(new Dimension(150, 70));
+        return panel;
+    }
+
+    private void addTextToPanel(JPanel panel, String text) {
+        JTextArea textArea = new JTextArea(1, 15);
+        textArea.setText(text);
+        textArea.setEditable(false);
+        textArea.setBackground(Color.WHITE);
+        panel.add(textArea);
+        panel.add(Box.createVerticalStrut(5));
+        panel.revalidate();
+        panel.repaint();
+    }
+
+    public static void main(String[] args) {
+        new Main();
     }
 }
