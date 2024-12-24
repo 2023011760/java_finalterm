@@ -1,8 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Main {
     private JFrame frame;
@@ -17,7 +16,7 @@ public class Main {
 
     private void openAssignmentWindow() {
         JFrame assignmentFrame = new JFrame("과제 입력");
-        assignmentFrame.setSize(400, 200);
+        assignmentFrame.setSize(220, 200);
         assignmentFrame.getContentPane().setBackground(Color.GRAY);
         assignmentFrame.setLayout(new FlowLayout());
 
@@ -59,9 +58,8 @@ public class Main {
         taskList = new JList<>(taskListModel);
         taskList.setCellRenderer(new TaskRenderer());
         taskList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        taskList.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
+        taskList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent e) {
                 int index = taskList.locationToIndex(e.getPoint());
                 if (index >= 0) {
                     toggleTaskCompletion(index);
@@ -71,6 +69,7 @@ public class Main {
 
         JScrollPane taskScrollPane = new JScrollPane(taskList);
         taskScrollPane.setPreferredSize(new Dimension(350, 200));
+        taskScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new FlowLayout());
@@ -102,7 +101,7 @@ public class Main {
     }
 
     private void addTaskToList(String taskText) {
-        taskListModel.addElement(taskText);
+        taskListModel.addElement("📌 " + taskText);
     }
 
     private void toggleTaskCompletion(int index) {
@@ -110,7 +109,7 @@ public class Main {
         if (taskText.startsWith("✔️ ")) {
             taskListModel.setElementAt(taskText.substring(2), index);
         } else {
-            taskListModel.setElementAt("✔️ " + taskText, index);
+            taskListModel.setElementAt("✔️ " + taskText.substring(2), index);
         }
     }
 
