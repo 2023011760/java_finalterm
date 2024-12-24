@@ -11,6 +11,39 @@ public class Main {
     private JPanel questionPanel;
 
     public Main() {
+        openAssignmentWindow();
+    }
+
+    private void openAssignmentWindow() {
+        JFrame assignmentFrame = new JFrame("과제 입력");
+        assignmentFrame.setSize(200, 200);
+        assignmentFrame.getContentPane().setBackground(Color.GRAY);
+        assignmentFrame.setLayout(new FlowLayout());
+
+        JLabel label = new JLabel("과제를 입력해주세요:");
+        assignmentField = new JTextField(15);
+        JButton nextButton = new JButton("다음");
+
+        nextButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String assignmentText = assignmentField.getText();
+                if (!assignmentText.isEmpty()) {
+                    assignmentFrame.dispose();
+                    openInputWindow(assignmentText);
+                }
+            }
+        });
+
+        assignmentFrame.add(label);
+        assignmentFrame.add(assignmentField);
+        assignmentFrame.add(nextButton);
+
+        assignmentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        assignmentFrame.setVisible(true);
+    }
+
+    private void openInputWindow(String assignmentText) {
         frame = new JFrame("입력 프로그램");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 300);
@@ -20,28 +53,22 @@ public class Main {
         assignmentPanel = createTextBoxPanel("과제");
         questionPanel = createTextBoxPanel("질문");
 
+        addTextToPanel(assignmentPanel, assignmentText);
+
         frame.add(assignmentPanel);
         frame.add(questionPanel);
 
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new FlowLayout());
 
-        assignmentField = new JTextField(10);
-        inputPanel.add(assignmentField);
-
-        questionField = new JTextField(10);
+        JTextField questionField = new JTextField(10);
         inputPanel.add(questionField);
 
         JButton submitButton = new JButton("완료");
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String assignmentText = assignmentField.getText();
                 String questionText = questionField.getText();
-                if (!assignmentText.isEmpty()) {
-                    addTextToPanel(assignmentPanel, assignmentText);
-                    assignmentField.setText("");
-                }
                 if (!questionText.isEmpty()) {
                     addTextToPanel(questionPanel, questionText);
                     questionField.setText("");
