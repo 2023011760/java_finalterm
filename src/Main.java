@@ -51,14 +51,14 @@ public class Main {
 
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
-        titlePanel.setBorder(BorderFactory.createTitledBorder("텍스트 제목 필드"));
+        titlePanel.setBorder(BorderFactory.createTitledBorder("과목명"));
         subjectField = new JTextField(subjectText);
         subjectField.setEditable(false);
         titlePanel.add(subjectField);
 
         JPanel taskPanel = new JPanel();
         taskPanel.setLayout(new BoxLayout(taskPanel, BoxLayout.Y_AXIS));
-        taskPanel.setBorder(BorderFactory.createTitledBorder("텍스트 과제 필드"));
+        taskPanel.setBorder(BorderFactory.createTitledBorder("과제"));
         taskArea = new JTextArea(10, 30);
         taskArea.setEditable(false);
         taskPanel.add(taskArea);
