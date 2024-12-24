@@ -6,9 +6,7 @@ import java.awt.event.ActionListener;
 public class Main {
     private JFrame frame;
     private JTextField assignmentField;
-    private JTextField questionField;
     private JPanel assignmentPanel;
-    private JPanel questionPanel;
 
     public Main() {
         openAssignmentWindow();
@@ -16,7 +14,7 @@ public class Main {
 
     private void openAssignmentWindow() {
         JFrame assignmentFrame = new JFrame("과제 입력");
-        assignmentFrame.setSize(200, 200);
+        assignmentFrame.setSize(400, 200);
         assignmentFrame.getContentPane().setBackground(Color.GRAY);
         assignmentFrame.setLayout(new FlowLayout());
 
@@ -46,38 +44,14 @@ public class Main {
     private void openInputWindow(String assignmentText) {
         frame = new JFrame("입력 프로그램");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 300);
+        frame.setSize(400, 200);
         frame.getContentPane().setBackground(Color.GRAY);
-        frame.setLayout(new GridLayout(1, 2));
+        frame.setLayout(new GridLayout(1, 1));
 
-        assignmentPanel = createTextBoxPanel("과제");
-        questionPanel = createTextBoxPanel("질문");
-
+        assignmentPanel = createTextBoxPanel("입력한 과제");
         addTextToPanel(assignmentPanel, assignmentText);
 
         frame.add(assignmentPanel);
-        frame.add(questionPanel);
-
-        JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new FlowLayout());
-
-        JTextField questionField = new JTextField(10);
-        inputPanel.add(questionField);
-
-        JButton submitButton = new JButton("완료");
-        submitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String questionText = questionField.getText();
-                if (!questionText.isEmpty()) {
-                    addTextToPanel(questionPanel, questionText);
-                    questionField.setText("");
-                }
-            }
-        });
-        inputPanel.add(submitButton);
-
-        frame.add(inputPanel, BorderLayout.SOUTH);
         frame.setVisible(true);
     }
 
