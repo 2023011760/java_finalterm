@@ -1,13 +1,15 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class Main {
     private JFrame frame;
     private JTextField assignmentField;
     private JTextField subjectField;
-    private JTextArea taskArea;
+    private DefaultListModel<String> taskListModel;
+    private JList<String> taskList;
 
     public Main() {
         openAssignmentWindow();
@@ -23,14 +25,11 @@ public class Main {
         assignmentField = new JTextField(15);
         JButton nextButton = new JButton("다음");
 
-        nextButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String subjectText = assignmentField.getText();
-                if (!subjectText.isEmpty()) {
-                    assignmentFrame.dispose();
-                    openInputWindow(subjectText);
-                }
+        nextButton.addActionListener(e -> {
+            String subjectText = assignmentField.getText();
+            if (!subjectText.isEmpty()) {
+                assignmentFrame.dispose();
+                openInputWindow(subjectText);
             }
         });
 
@@ -56,12 +55,22 @@ public class Main {
         subjectField.setEditable(false);
         titlePanel.add(subjectField);
 
-        JPanel taskPanel = new JPanel();
-        taskPanel.setLayout(new BoxLayout(taskPanel, BoxLayout.Y_AXIS));
-        taskPanel.setBorder(BorderFactory.createTitledBorder("과제"));
-        taskArea = new JTextArea(10, 30);
-        taskArea.setEditable(false);
-        taskPanel.add(taskArea);
+        taskListModel = new DefaultListModel<>();
+        taskList = new JList<>(taskListModel);
+        taskList.setCellRenderer(new TaskRenderer());
+        taskList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        taskList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int index = taskList.locationToIndex(e.getPoint());
+                if (index >= 0) {
+                    toggleTaskCompletion(index);
+                }
+            }
+        });
+
+        JScrollPane taskScrollPane = new JScrollPane(taskList);
+        taskScrollPane.setPreferredSize(new Dimension(350, 200));
 
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new FlowLayout());
@@ -70,39 +79,55 @@ public class Main {
         JButton addButton = new JButton("추가");
         inputPanel.add(addButton);
 
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String taskText = inputField.getText();
-                if (!taskText.isEmpty()) {
-                    addTaskToArea(taskText);
-                    inputField.setText("");
-                }
+        addButton.addActionListener(e -> {
+            String taskText = inputField.getText();
+            if (!taskText.isEmpty()) {
+                addTaskToList(taskText);
+                inputField.setText("");
             }
         });
 
-        inputField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String taskText = inputField.getText();
-                if (!taskText.isEmpty()) {
-                    addTaskToArea(taskText);
-                    inputField.setText("");
-                }
+        inputField.addActionListener(e -> {
+            String taskText = inputField.getText();
+            if (!taskText.isEmpty()) {
+                addTaskToList(taskText);
+                inputField.setText("");
             }
         });
 
         frame.add(titlePanel, BorderLayout.NORTH);
-        frame.add(taskPanel, BorderLayout.CENTER);
+        frame.add(taskScrollPane, BorderLayout.CENTER);
         frame.add(inputPanel, BorderLayout.SOUTH);
         frame.setVisible(true);
     }
 
-    private void addTaskToArea(String taskText) {
-        taskArea.append("📌 " + taskText + "\n");
+    private void addTaskToList(String taskText) {
+        taskListModel.addElement(taskText);
+    }
+
+    private void toggleTaskCompletion(int index) {
+        String taskText = taskListModel.getElementAt(index);
+        if (taskText.startsWith("✔️ ")) {
+            taskListModel.setElementAt(taskText.substring(2), index);
+        } else {
+            taskListModel.setElementAt("✔️ " + taskText, index);
+        }
     }
 
     public static void main(String[] args) {
         new Main();
+    }
+
+    class TaskRenderer extends DefaultListCellRenderer {
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            if (value.toString().startsWith("✔️ ")) {
+                label.setText("<html><strike>" + value.toString().substring(2) + "</strike></html>");
+            } else {
+                label.setText(value.toString());
+            }
+            return label;
+        }
     }
 }
